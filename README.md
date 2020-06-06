@@ -2,7 +2,7 @@
 update domain record using AliCloud Go SDK.
 
 ### Usage
-- Create a AccessKey at https://aliyun.com.
+- Create a AccessKey at https://usercenter.console.aliyun.com/.
 - Fill in `config.json` the AccessKey, secret, and the domain you'd setup.
 - To compile, just run `go build alidns.go`. *Run `go mod init alidns` first if needed.*
 - If provided correct config file, things should work fine.
