@@ -39,7 +39,7 @@ func main() {
 
 	configPath := flag.String("config", "./config.json", "path to config file")
 	flag.Parse()
-	fmt.Println(*configPath)
+	fmt.Println("config file path: ", *configPath)
 
 	configJson, err := ioutil.ReadFile(*configPath)
 	if err != nil {
