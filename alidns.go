@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -36,8 +37,11 @@ type IpJson struct {
 
 func main() {
 
-	configPath := "./config.json"
-	configJson, err := ioutil.ReadFile(configPath)
+	configPath := flag.String("config", "./config.json", "path to config file")
+	flag.Parse()
+	fmt.Println(*configPath)
+
+	configJson, err := ioutil.ReadFile(*configPath)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
