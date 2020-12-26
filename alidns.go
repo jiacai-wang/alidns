@@ -16,6 +16,7 @@ type Config struct {
 	AccessKeyId  string `json:"accessKeyId"`
 	AccessSecret string `json:"accessSecret"`
 	DomainName   string `json:"domainName"`
+	RR           string `json:"RR"`
 }
 
 type IpJson struct {
@@ -77,42 +78,50 @@ func main() {
 		fmt.Println(err.Error())
 	}
 
-	if domainRecords.TotalCount == 0 { // add domain record if none exists
+	var i int64 = 0
+	var found bool = false
+	// find subdomain
+	for i = 0; i < domainRecords.TotalCount; i++ {
+		if config.RR == domainRecords.DomainRecords.Record[i].RR {
+			found = true                                           //found subdomain record
+			if ip == domainRecords.DomainRecords.Record[i].Value { // ip not changed
+				fmt.Println("ip", ip, "not changed!")
+			} else {
+				fmt.Printf("ip changed from %s to %s\n", domainRecords.DomainRecords.Record[0].Value, ip)
+				fmt.Printf("---> update %s record to %s ...\n", config.RR+"."+config.DomainName, ip)
+
+				updateDomainRecordRequest := alidns.CreateUpdateDomainRecordRequest()
+				updateDomainRecordRequest.Scheme = "https"
+				updateDomainRecordRequest.RecordId = domainRecords.DomainRecords.Record[0].RecordId
+				updateDomainRecordRequest.RR = config.RR
+				updateDomainRecordRequest.Type = "A"
+				updateDomainRecordRequest.Value = ip
+				response, err := client.UpdateDomainRecord(updateDomainRecordRequest)
+				if err != nil {
+					fmt.Println(err.Error())
+				}
+				if response.IsSuccess() {
+					fmt.Println("success")
+				} else {
+					fmt.Printf("failed.\n%s\n", response.GetHttpContentString())
+				}
+			}
+		}
+
+	}
+	if !found {
 		fmt.Printf("ip is %s, but no domain record found.\n", ip)
-		fmt.Printf("---> update %s record to %s ...\n", config.DomainName, ip)
+		fmt.Printf("---> update %s record to %s ...\n", config.RR+"."+config.DomainName, ip)
 
 		addDomainRequest := alidns.CreateAddDomainRecordRequest()
 		addDomainRequest.Scheme = "https"
 
 		addDomainRequest.DomainName = config.DomainName
-		addDomainRequest.RR = "@"
+		addDomainRequest.RR = config.RR
 		addDomainRequest.Type = "A"
 		addDomainRequest.Value = ip
 
 		response, err := client.AddDomainRecord(addDomainRequest)
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-		if response.IsSuccess() {
-			fmt.Println("success")
-		} else {
-			fmt.Printf("failed.\n%s\n", response.GetHttpContentString())
-		}
-
-	} else if ip == domainRecords.DomainRecords.Record[0].Value { //ip unchanged
-		fmt.Printf("ip  unchanged: %s\n", ip)
-
-	} else { //update record[0] by default
-		fmt.Printf("ip changed from %s to %s\n", domainRecords.DomainRecords.Record[0].Value, ip)
-		fmt.Printf("---> update %s record to %s ...\n", config.DomainName, ip)
-
-		updateDomainRecordRequest := alidns.CreateUpdateDomainRecordRequest()
-		updateDomainRecordRequest.Scheme = "https"
-		updateDomainRecordRequest.RecordId = domainRecords.DomainRecords.Record[0].RecordId
-		updateDomainRecordRequest.RR = "@"
-		updateDomainRecordRequest.Type = "A"
-		updateDomainRecordRequest.Value = ip
-		response, err := client.UpdateDomainRecord(updateDomainRecordRequest)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
