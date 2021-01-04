@@ -87,12 +87,12 @@ func main() {
 			if ip == domainRecords.DomainRecords.Record[i].Value { // ip not changed
 				fmt.Println("ip", ip, "not changed!")
 			} else {
-				fmt.Printf("ip changed from %s to %s\n", domainRecords.DomainRecords.Record[0].Value, ip)
+				fmt.Printf("ip changed from %s to %s\n", domainRecords.DomainRecords.Record[i].Value, ip)
 				fmt.Printf("---> update %s record to %s ...\n", config.RR+"."+config.DomainName, ip)
 
 				updateDomainRecordRequest := alidns.CreateUpdateDomainRecordRequest()
 				updateDomainRecordRequest.Scheme = "https"
-				updateDomainRecordRequest.RecordId = domainRecords.DomainRecords.Record[0].RecordId
+				updateDomainRecordRequest.RecordId = domainRecords.DomainRecords.Record[i].RecordId
 				updateDomainRecordRequest.RR = config.RR
 				updateDomainRecordRequest.Type = "A"
 				updateDomainRecordRequest.Value = ip
@@ -111,7 +111,7 @@ func main() {
 	}
 	if !found {
 		fmt.Printf("ip is %s, but no domain record found.\n", ip)
-		fmt.Printf("---> update %s record to %s ...\n", config.RR+"."+config.DomainName, ip)
+		fmt.Printf("---> add %s record to %s ...\n", config.RR+"."+config.DomainName, ip)
 
 		addDomainRequest := alidns.CreateAddDomainRecordRequest()
 		addDomainRequest.Scheme = "https"
