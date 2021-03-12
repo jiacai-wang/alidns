@@ -3,5 +3,6 @@
     "accessKeyId": "YOUR_ACCESS_KEY_ID",
     "accessSecret": "YOUR_ACCESS_SECRET",
     "domainName": "YOUR_DOMAIN_NAME",
+    "Type": "A",
     "RR": "@"
 }

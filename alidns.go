@@ -16,6 +16,7 @@ type Config struct {
 	AccessKeyId  string `json:"accessKeyId"`
 	AccessSecret string `json:"accessSecret"`
 	DomainName   string `json:"domainName"`
+	Type         string `json:"Type"`
 	RR           string `json:"RR"`
 }
 
@@ -82,7 +83,7 @@ func main() {
 	var found bool = false
 	// find subdomain
 	for i = 0; i < domainRecords.TotalCount; i++ {
-		if config.RR == domainRecords.DomainRecords.Record[i].RR {
+		if config.RR == domainRecords.DomainRecords.Record[i].RR && config.Type == domainRecords.DomainRecords.Record[i].Type {
 			found = true                                           //found subdomain record
 			if ip == domainRecords.DomainRecords.Record[i].Value { // ip not changed
 				fmt.Println("ip", ip, "not changed!")
@@ -94,7 +95,7 @@ func main() {
 				updateDomainRecordRequest.Scheme = "https"
 				updateDomainRecordRequest.RecordId = domainRecords.DomainRecords.Record[i].RecordId
 				updateDomainRecordRequest.RR = config.RR
-				updateDomainRecordRequest.Type = "A"
+				updateDomainRecordRequest.Type = config.Type
 				updateDomainRecordRequest.Value = ip
 				response, err := client.UpdateDomainRecord(updateDomainRecordRequest)
 				if err != nil {
@@ -118,7 +119,7 @@ func main() {
 
 		addDomainRequest.DomainName = config.DomainName
 		addDomainRequest.RR = config.RR
-		addDomainRequest.Type = "A"
+		addDomainRequest.Type = config.Type
 		addDomainRequest.Value = ip
 
 		response, err := client.AddDomainRecord(addDomainRequest)
