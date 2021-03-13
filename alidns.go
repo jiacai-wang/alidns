@@ -110,6 +110,7 @@ func main() {
 		}
 
 	}
+
 	if !found {
 		fmt.Printf("ip is %s, but no domain record found.\n", ip)
 		fmt.Printf("---> add %s record to %s ...\n", config.RR+"."+config.DomainName, ip)
