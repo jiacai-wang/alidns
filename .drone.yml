@@ -9,9 +9,5 @@ pipeline:
      commands:
        - pwd
        - ls
-<<<<<<< HEAD
        - go get -u github.com/aliyun/alibaba-cloud-sdk-go/sdk
        - go build alidns.go
-=======
-       - CGO_ENABLED=0 GOOS=linux go build .
->>>>>>> 29125870646f1d650080294b8c5e0e56c7a5b872
