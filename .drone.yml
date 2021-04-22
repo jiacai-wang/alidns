@@ -1,0 +1,12 @@
+workspace:
+  base: /srv/drone-demo
+  path: .
+
+pipeline:
+  build:
+     image: golang
+     # pull: true
+     commands:
+       - pwd
+       - ls
+       - CGO_ENABLED=0 GOOS=linux go build .
