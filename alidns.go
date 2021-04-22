@@ -11,6 +11,7 @@ import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/alidns"
 )
 
+// TODO: support array of (Type, RR)
 type Config struct {
 	RegionId     string `json:"regionId"`
 	AccessKeyId  string `json:"accessKeyId"`
