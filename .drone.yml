@@ -11,5 +11,6 @@ pipeline:
        - ls
        - go env -w GOPROXY=https://goproxy.io,direct
        - go get -u github.com/aliyun/alibaba-cloud-sdk-go/sdk
+       - go get -u github.com/aliyun/alibaba-cloud-sdk-go/services/alidns
        - go mod init alidns
        - go build alidns.go
