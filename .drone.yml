@@ -9,5 +9,6 @@ pipeline:
      commands:
        - pwd
        - ls
+       - go env -w GOPROXY=https://goproxy.io,direct
        - go get -u github.com/aliyun/alibaba-cloud-sdk-go/sdk
        - go build alidns.go
