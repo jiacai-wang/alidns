@@ -12,13 +12,18 @@ import (
 )
 
 // TODO: support array of (Type, RR)
+
+type Record struct {
+	Type string `json:"Type"`
+	RR   string `json:"RR"`
+}
+
 type Config struct {
 	RegionId     string `json:"regionId"`
 	AccessKeyId  string `json:"accessKeyId"`
 	AccessSecret string `json:"accessSecret"`
 	DomainName   string `json:"domainName"`
-	Type         string `json:"Type"`
-	RR           string `json:"RR"`
+	Records      []Record
 }
 
 type IpJson struct {
