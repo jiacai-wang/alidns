@@ -11,13 +11,17 @@ import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/alidns"
 )
 
+type Record struct {
+	Type string `json:"type"`
+	RR   string `json:"RR"`
+}
+
 type Config struct {
-	RegionId     string `json:"regionId"`
-	AccessKeyId  string `json:"accessKeyId"`
-	AccessSecret string `json:"accessSecret"`
-	DomainName   string `json:"domainName"`
-	Type         string `json:"Type"`
-	RR           string `json:"RR"`
+	RegionId     string   `json:"regionId"`
+	AccessKeyId  string   `json:"accessKeyId"`
+	AccessSecret string   `json:"accessSecret"`
+	DomainName   string   `json:"domainName"`
+	Records      []Record `json:"records"`
 }
 
 type IpJson struct {
@@ -41,7 +45,7 @@ func main() {
 
 	configPath := flag.String("config", "./config.json", "path to config file")
 	flag.Parse()
-	fmt.Println("config file path: ", *configPath)
+	fmt.Println("config file path:", *configPath)
 
 	configJson, err := ioutil.ReadFile(*configPath)
 	if err != nil {
@@ -79,59 +83,63 @@ func main() {
 		fmt.Println(err.Error())
 	}
 
-	var i int64 = 0
 	var found bool = false
-	// find subdomain
-	for i = 0; i < domainRecords.TotalCount; i++ {
-		if config.RR == domainRecords.DomainRecords.Record[i].RR && config.Type == domainRecords.DomainRecords.Record[i].Type {
-			found = true                                           //found subdomain record
-			if ip == domainRecords.DomainRecords.Record[i].Value { // ip not changed
-				fmt.Println("ip", ip, "not changed!")
-			} else {
-				fmt.Printf("ip changed from %s to %s\n", domainRecords.DomainRecords.Record[i].Value, ip)
-				fmt.Printf("---> update %s record to %s ...\n", config.RR+"."+config.DomainName, ip)
 
-				updateDomainRecordRequest := alidns.CreateUpdateDomainRecordRequest()
-				updateDomainRecordRequest.Scheme = "https"
-				updateDomainRecordRequest.RecordId = domainRecords.DomainRecords.Record[i].RecordId
-				updateDomainRecordRequest.RR = config.RR
-				updateDomainRecordRequest.Type = config.Type
-				updateDomainRecordRequest.Value = ip
-				response, err := client.UpdateDomainRecord(updateDomainRecordRequest)
-				if err != nil {
-					fmt.Println(err.Error())
-				}
-				if response.IsSuccess() {
-					fmt.Println("success")
+	// find subdomain
+	for _, record := range config.Records {
+		for _, record_ := range domainRecords.DomainRecords.Record {
+
+			if record.Type == record_.Type &&
+				record.RR == record_.RR {
+				found = true             //found subdomain record
+				if ip == record_.Value { // ip not changed
+					fmt.Println(record.RR+"."+config.DomainName, "unchanged:", ip)
 				} else {
-					fmt.Printf("failed.\n%s\n", response.GetHttpContentString())
+					fmt.Println(record.RR+"."+config.DomainName, "changed:", record_.Value, "->", ip)
+					fmt.Println("updating record...")
+
+					updateDomainRecordRequest := alidns.CreateUpdateDomainRecordRequest()
+					updateDomainRecordRequest.Scheme = "https"
+					updateDomainRecordRequest.RecordId = record_.RecordId
+					updateDomainRecordRequest.RR = record.RR
+					updateDomainRecordRequest.Type = record.Type
+					updateDomainRecordRequest.Value = ip
+					response, err := client.UpdateDomainRecord(updateDomainRecordRequest)
+					if err != nil {
+						fmt.Println(err.Error())
+					}
+					if response.IsSuccess() {
+						fmt.Println("success")
+					} else {
+						fmt.Println("failed.", response.GetHttpContentString())
+					}
 				}
 			}
 		}
 
+		if !found {
+			fmt.Println(record.RR+"."+config.DomainName, "not found in records.")
+			fmt.Println("adding record:", record.RR+"."+config.DomainName, "->", ip)
+
+			addDomainRequest := alidns.CreateAddDomainRecordRequest()
+			addDomainRequest.Scheme = "https"
+
+			addDomainRequest.DomainName = config.DomainName
+			addDomainRequest.RR = record.RR
+			addDomainRequest.Type = record.Type
+			addDomainRequest.Value = ip
+
+			response, err := client.AddDomainRecord(addDomainRequest)
+			if err != nil {
+				fmt.Println(err.Error())
+			}
+			if response.IsSuccess() {
+				fmt.Println("success")
+			} else {
+				fmt.Println("failed.", response.GetHttpContentString())
+			}
+		}
 	}
 
-	if !found {
-		fmt.Printf("ip is %s, but no domain record found.\n", ip)
-		fmt.Printf("---> add %s record to %s ...\n", config.RR+"."+config.DomainName, ip)
-
-		addDomainRequest := alidns.CreateAddDomainRecordRequest()
-		addDomainRequest.Scheme = "https"
-
-		addDomainRequest.DomainName = config.DomainName
-		addDomainRequest.RR = config.RR
-		addDomainRequest.Type = config.Type
-		addDomainRequest.Value = ip
-
-		response, err := client.AddDomainRecord(addDomainRequest)
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-		if response.IsSuccess() {
-			fmt.Println("success")
-		} else {
-			fmt.Printf("failed.\n%s\n", response.GetHttpContentString())
-		}
-	}
 	fmt.Println()
 }
