@@ -24,7 +24,7 @@ update domain record using AliCloud Go SDK. ip is fetched from http://ip-api.com
 ### Release
 
 Windows
-> [alidns.zip](https://github.com/jiacai-wang/alidns/releases/download/v0.1/alidns.x86.zip)
+> [alidns.zip (to be updated.)](https://github.com/jiacai-wang/alidns/releases/download/v0.1/alidns.x86.zip)
 
 Linux
-> [alidns.tar.gz](https://github.com/jiacai-wang/alidns/releases/download/v0.1/alidns.x86.tar.gz)
+> [alidns.tar.gz (to be updated.)](https://github.com/jiacai-wang/alidns/releases/download/v0.1/alidns.x86.tar.gz)
