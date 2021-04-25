@@ -24,7 +24,7 @@ jobs:
 
     - name: Get dependencies
       run: |
-        go mod init && go mod tidy
+        go mod init alidns && go mod tidy
         go get -v -t -d ./...
         if [ -f Gopkg.toml ]; then
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
