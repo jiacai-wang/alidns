@@ -5,6 +5,9 @@ workspace:
 pipeline:
   build:
      image: golang
+     os:
+      - linux
+      - windows
      # pull: true
      commands:
        - pwd
