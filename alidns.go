@@ -87,6 +87,7 @@ func main() {
 
 	// find subdomain
 	for _, record := range config.Records {
+		found = false
 		for _, record_ := range domainRecords.DomainRecords.Record {
 
 			if record.Type == record_.Type &&
