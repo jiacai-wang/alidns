@@ -3,30 +3,9 @@ workspace:
   path: .
 
 pipeline:
-  name: build_linux_amd64
   build:
      image: golang
-     environment:
-      GOOS: linux
-      GOARCH: amd64
-     # pull: true
-     commands:
-       - pwd
-       - ls
-       - go env -w GOPROXY=https://goproxy.io,direct
-       - go get -u github.com/aliyun/alibaba-cloud-sdk-go/services/alidns
-       - go mod init alidns
-       - go mod tidy
-       - go build alidns.go
-       - ls -al
 
-pipeline:
-  name: build_windows_amd-64
-  build:
-     image: golang
-     environment:
-      GOOS: windows
-      GOARCH: amd64
      # pull: true
      commands:
        - pwd
@@ -36,4 +15,3 @@ pipeline:
        - go mod init alidns
        - go mod tidy
        - go build alidns.go
-       - ls -al
