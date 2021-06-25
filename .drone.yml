@@ -5,12 +5,12 @@ workspace:
 pipeline:
   build:
      image: golang
+
      # pull: true
      commands:
        - pwd
        - ls
        - go env -w GOPROXY=https://goproxy.io,direct
-       - go get -u github.com/aliyun/alibaba-cloud-sdk-go/sdk
        - go get -u github.com/aliyun/alibaba-cloud-sdk-go/services/alidns
        - go mod init alidns
        - go mod tidy
