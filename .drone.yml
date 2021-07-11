@@ -8,9 +8,8 @@ pipeline:
 
      # pull: true
      commands:
-       - pwd
-       - ls
+       - pwd && ls
        - go env -w GOPROXY=https://goproxy.io,direct
        - go get -u github.com/aliyun/alibaba-cloud-sdk-go/services/alidns
-       - go mod tidy
+       - go mod init alidns && go mod tidy
        - go build alidns.go
