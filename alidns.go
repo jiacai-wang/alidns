@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/alidns"
 )
@@ -72,6 +73,10 @@ func main() {
 	}
 
 	client, err := alidns.NewClientWithAccessKey(config.RegionId, config.AccessKeyId, config.AccessSecret)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(-1)
+	}
 
 	describeDomainRequest := alidns.CreateDescribeDomainRecordsRequest()
 	describeDomainRequest.Scheme = "https"
@@ -81,6 +86,7 @@ func main() {
 	domainRecords, err := client.DescribeDomainRecords(describeDomainRequest)
 	if err != nil {
 		fmt.Println(err.Error())
+		os.Exit(-1)
 	}
 
 	var found bool = false
