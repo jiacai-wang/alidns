@@ -26,20 +26,9 @@ type Config struct {
 }
 
 type IpJson struct {
-	Status      string  `json:"status"`
-	Country     string  `json:"country"`
-	CountryCode string  `json:"countryCode"`
-	Region      string  `json:"region"`
-	RegionName  string  `json:"regionName"`
-	City        string  `json:"city"`
-	Zip         string  `json:"zip"`
-	Lat         float64 `json:"lat"`
-	Lon         float64 `json:"lon"`
-	Timezone    string  `json:"timezone"`
-	Isp         string  `json:"isp"`
-	Org         string  `json:"org"`
-	As          string  `json:"as"`
-	Query       string  `json:"query"`
+	Status  string `json:"status"`
+	Message string `json:"message"`
+	Query   string `json:"query"`
 }
 
 func main() {
@@ -55,7 +44,7 @@ func main() {
 	var config Config
 	json.Unmarshal(configJson, &config)
 
-	res, err := http.Get("http://ip-api.com/json/")
+	res, err := http.Get("http://ip-api.com/json?fields=status,message,query")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -69,7 +58,7 @@ func main() {
 	json.Unmarshal(data, &ipJson)
 	ip := ipJson.Query
 	if ipJson.Status != "success" {
-		log.Fatal("get ip failed")
+		log.Fatal("get ip failed: " + ipJson.Message)
 	}
 
 	client, err := alidns.NewClientWithAccessKey(config.RegionId, config.AccessKeyId, config.AccessSecret)
