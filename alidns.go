@@ -31,6 +31,21 @@ type IpJson struct {
 	Query   string `json:"query"`
 }
 
+func getPubIp() (ip string) {
+	res, err := http.Get("https://ifconfig.me")
+	defer res.Body.Close()
+	if err != nil || res.StatusCode != 200 {
+		log.Fatal("http get error:", err, " http response:", res.StatusCode)
+	}
+	data, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Fatal("read http body error:", err)
+	}
+	ip = string(data)
+	fmt.Println("ip:", ip)
+	return
+}
+
 func main() {
 
 	configPath := flag.String("config", "./config.json", "path to config file")
@@ -44,22 +59,7 @@ func main() {
 	var config Config
 	json.Unmarshal(configJson, &config)
 
-	res, err := http.Get("http://ip-api.com/json?fields=status,message,query")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	data, err := ioutil.ReadAll(res.Body)
-	res.Body.Close()
-	if err != nil {
-		log.Fatal(err)
-	}
-	var ipJson IpJson
-	json.Unmarshal(data, &ipJson)
-	ip := ipJson.Query
-	if ipJson.Status != "success" {
-		log.Fatal("get ip failed: " + ipJson.Message)
-	}
+	ip := getPubIp()
 
 	client, err := alidns.NewClientWithAccessKey(config.RegionId, config.AccessKeyId, config.AccessSecret)
 	if err != nil {

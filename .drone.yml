@@ -1,15 +1,14 @@
-workspace:
-  base: /srv/drone-demo
-  path: .
+kind: pipeline
+type: docker
+name: default
 
-pipeline:
-  build:
-     image: golang
-
-     # pull: true
-     commands:
-       - pwd && ls
-       - go env -w GOPROXY=https://goproxy.io,direct
-       - go get -u github.com/aliyun/alibaba-cloud-sdk-go/services/alidns
-       - go mod init alidns && go mod tidy
-       - go build alidns.go
+steps:
+- name: build
+  image: golang
+  commands:
+    - pwd && ls
+    - go env -w GOPROXY=https://goproxy.io,direct
+    - go get -u github.com/aliyun/alibaba-cloud-sdk-go/services/alidns
+    - go mod init alidns && go mod tidy
+    - go build alidns.go
+    - go test
