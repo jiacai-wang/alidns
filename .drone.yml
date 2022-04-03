@@ -7,7 +7,7 @@ steps:
   image: golang
   commands:
     - pwd && ls
-    - go env -w GOPROXY=https://goproxy.io,direct
+    - go env -w GOPROXY=https://proxy.golang.com.cn,direct
     - go get -u github.com/aliyun/alibaba-cloud-sdk-go/services/alidns
     - go mod init alidns && go mod tidy
     - go build alidns.go
