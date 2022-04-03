@@ -1,7 +1,7 @@
 # alidns
-update domain record using AliCloud Go SDK. ip is fetched from http://ip-api.com/json.
+update domain record using AliCloud Go SDK. ip is fetched from https://ifconfig.me.
 
-更新阿里云域名的解析IP地址。IP地址从http://ip-api.com/json 获取
+更新阿里云域名的解析IP地址。IP地址从https://ifconfig.me 获取
 
 
 ### Usage
