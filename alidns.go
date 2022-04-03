@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/alidns"
 )
@@ -54,7 +53,7 @@ func main() {
 
 	configJson, err := ioutil.ReadFile(*configPath)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal("read config file error:", err)
 	}
 	var config Config
 	json.Unmarshal(configJson, &config)
@@ -63,8 +62,7 @@ func main() {
 
 	client, err := alidns.NewClientWithAccessKey(config.RegionId, config.AccessKeyId, config.AccessSecret)
 	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(-1)
+		log.Fatal("create alidns client error:", err)
 	}
 
 	describeDomainRequest := alidns.CreateDescribeDomainRecordsRequest()
@@ -74,8 +72,7 @@ func main() {
 
 	domainRecords, err := client.DescribeDomainRecords(describeDomainRequest)
 	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(-1)
+		log.Fatal("describe domain records error:", err)
 	}
 
 	var found bool = false
@@ -102,12 +99,12 @@ func main() {
 					updateDomainRecordRequest.Value = ip
 					response, err := client.UpdateDomainRecord(updateDomainRecordRequest)
 					if err != nil {
-						fmt.Println(err.Error())
+						log.Println("update domain record error:", err)
 					}
 					if response.IsSuccess() {
 						fmt.Println("success")
 					} else {
-						fmt.Println("failed.", response.GetHttpContentString())
+						log.Println("update domain record error:", response)
 					}
 				}
 			}
@@ -127,12 +124,12 @@ func main() {
 
 			response, err := client.AddDomainRecord(addDomainRequest)
 			if err != nil {
-				fmt.Println(err.Error())
+				log.Println("add domain record error:", err)
 			}
 			if response.IsSuccess() {
 				fmt.Println("success")
 			} else {
-				fmt.Println("failed.", response.GetHttpContentString())
+				log.Println("add domain record error:", response)
 			}
 		}
 	}
